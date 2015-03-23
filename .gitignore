@@ -201,3 +201,4 @@ FakesAssemblies/
 *.vcxproj
 *.vcxproj.filters
 *.sln
+HttpClient/main.cpp
