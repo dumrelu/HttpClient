@@ -17,6 +17,10 @@ Headers::Headers(Headers &&o) : values_(std::move(o.values_))
 {
 }
 
+Headers::Headers(const map_type &map) : values_(map)
+{
+}
+
 Headers &Headers::operator=(Headers &&o)
 {
 	if (this != &o) {

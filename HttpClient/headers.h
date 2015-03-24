@@ -10,10 +10,14 @@ namespace http {
 	
 	class Headers {
 	public:
+		typedef std::unordered_map<std::string, std::string> map_type;
+
+	public:
 		Headers();
 		Headers(std::istream &in);
 		Headers(const Headers &) = default;
 		Headers(Headers &&);
+		Headers(const map_type &map);
 
 		Headers &operator=(const Headers &) = default;
 		Headers &operator=(Headers &&);
@@ -32,7 +36,7 @@ namespace http {
 		void parse(std::istream &in);
 
 	private:
-		std::unordered_map<std::string, std::string> values_;
+		map_type values_;
 	};
 
 }
