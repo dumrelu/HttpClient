@@ -10,21 +10,7 @@ Headers::Headers()
 
 Headers::Headers(std::istream &in)
 {
-	//Parse headers
-	std::string line;
-
-	while (std::getline(in, line)) {
-		auto it = line.find(':');
-
-		if (it == std::string::npos)
-			break;
-
-		std::string key, value;
-		std::istringstream(line.substr(0, it)) >> key;
-		std::getline(std::istringstream(line.substr(it+1)) >> std::ws, value);
-
-		values_[key] = value;
-	}
+	parse(in);
 }
 
 Headers::Headers(Headers &&o) : values_(std::move(o.values_))
@@ -84,4 +70,23 @@ std::string Headers::toString() const
 		str += p.first + ": " + p.second + "\r\n";
 
 	return str;
+}
+
+void Headers::parse(std::istream &in)
+{
+	//Parse headers
+	std::string line;
+
+	while (std::getline(in, line)) {
+		auto it = line.find(':');
+
+		if (it == std::string::npos)
+			break;
+
+		std::string key, value;
+		std::istringstream(line.substr(0, it)) >> key;
+		std::getline(std::istringstream(line.substr(it + 1)) >> std::ws, value);
+
+		values_[key] = value;
+	}
 }

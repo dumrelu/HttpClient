@@ -29,6 +29,7 @@ namespace http {
 		int getInt(const std::string &field, int defaultValue = -1) const;
 
 		std::string toString() const;
+		void parse(std::istream &in);
 
 	private:
 		std::unordered_map<std::string, std::string> values_;
