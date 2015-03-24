@@ -24,3 +24,25 @@ Request::Request(const std::string &methodString, const std::string &path, const
 {
 		rdbuf(buf_.get());
 }
+
+Request::Request(Request &&o) :
+	std::ostream(std::move(o)), headers_(std::move(o.headers_)), methodString_(std::move(o.methodString_)),
+	path_(std::move(o.path_)), buf_(std::move(o.buf_))
+{
+		rdbuf(buf_.get());
+}
+
+Request &Request::operator=(Request &&o)
+{
+	if (this != &o) {
+		std::ostream::operator=(std::move(o));
+		headers_ = std::move(o.headers_);
+		methodString_ = std::move(o.methodString_);
+		path_ = std::move(o.path_);
+		buf_ = std::move(o.buf_);
+
+		rdbuf(buf_.get());
+	}
+
+	return *this;
+}

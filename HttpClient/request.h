@@ -30,6 +30,11 @@ namespace http {
 
 		Request(Method method = GET, const std::string &path = "/", const Headers &headers = Headers());
 		Request(const std::string &methodString, const std::string &path = "/", const Headers &headers = Headers());
+		Request(const Request &) = delete;
+		Request(Request &&);
+
+		Request &operator=(const Request &) = delete;
+		Request &operator=(Request &&);
 
 		const Headers &getHeaders() const { return headers_; }
 		const std::string &getMethodString() const { return methodString_; }
