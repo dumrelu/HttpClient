@@ -44,7 +44,7 @@ namespace http {
 		void setHeaders(const Headers &headers) { headers_ = headers; }
 		void setMethodString(const std::string &methodString) { methodString_ = methodString; }
 		void setPath(const std::string &path) { path_ = path; }
-		void setBuf(boost::asio::streambuf *buf) { buf_.reset(buf); }
+		void setBuf(boost::asio::streambuf *buf) { buf_.reset(buf); rdbuf(buf); }
 
 	private:
 		Headers headers_;
