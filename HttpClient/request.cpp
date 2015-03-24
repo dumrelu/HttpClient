@@ -14,11 +14,13 @@ std::unordered_map<Request::Method, std::string> Request::methodStrings_{
 };
 
 Request::Request(Method method, const std::string &path, const Headers &headers) : 
-	headers_(headers), methodString_(methodStrings_[method]), path_(path)
+	std::ostream(nullptr), headers_(headers), methodString_(methodStrings_[method]), path_(path), buf_(new boost::asio::streambuf)
 {
+		rdbuf(buf_.get());
 }
 
 Request::Request(const std::string &methodString, const std::string &path, const Headers &headers) :
-	headers_(headers), methodString_(methodString), path_(path)
+	std::ostream(nullptr), headers_(headers), methodString_(methodString), path_(path), buf_(new boost::asio::streambuf())
 {
+		rdbuf(buf_.get());
 }
