@@ -2,7 +2,7 @@
 #ifndef HTTP_BASE_CLIENT_IMPLEMENTATION_H_
 #define HTTP_BASE_CLIENT_IMPLEMENTATION_H_
 //
-//TODO: default headers
+//TODO: default headers, user agent
 #ifndef HTTP_USER_AGENT
 #define HTTP_USER_AGENT "C++ HTTP Client"
 #endif
@@ -50,6 +50,34 @@ namespace http {
 		boost::asio::write(sock(), boost::asio::buffer(requestHeader));
 
 		boost::asio::write(sock(), *request.getBuf());
+	}
+
+	template <typename S>
+	Response base_client<S>::recv_response()
+	{
+		Response response;
+		boost::asio::streambuf &streambuf = *response.getBuf();
+
+		auto header_size = boost::asio::read_until(sock(), streambuf, "\r\n\r\n");
+		Headers headers(response);
+		
+		if (!headers.hasValue("Content-Length"))
+			throw std::runtime_error("No \"Content-Length\" field.");
+
+		auto body_size = headers.getInt("Content-Length") - (response.getBuf()->size() - header_size);
+		boost::asio::read(sock(), streambuf.prepare(body_size));
+
+		return response;
+	}
+
+	template <typename S>
+	Response base_client<S>::exec(const Request &request)
+	{
+		if (!isConnected())
+			connect();
+
+		send_request(request);
+		return recv_response();
 	}
 }
 

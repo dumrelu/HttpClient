@@ -37,6 +37,7 @@ namespace http {
 
 	protected:
 		virtual void connect() = 0;
+		virtual bool isConnected() = 0;
 		virtual void disconnect() = 0;
 		virtual Socket& sock() = 0;
 
