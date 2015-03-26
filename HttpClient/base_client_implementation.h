@@ -29,13 +29,6 @@ namespace http {
 	}
 
 	template <typename S>
-	Response base_client<S>::exec(const Request &request)
-	{
-		send_request(request);
-		return recv_response();
-	}
-
-	template <typename S>
 	void base_client<S>::send_request(const Request &request)
 	{
 		std::string requestLine = request.getMethodString() + " ";
@@ -57,15 +50,26 @@ namespace http {
 	{
 		Response response;
 		boost::asio::streambuf &streambuf = *response.getBuf();
+		Headers headers;
+		std::string httpVersion, reasonPhrase;
+		int statusCode;
 
 		auto header_size = boost::asio::read_until(sock(), streambuf, "\r\n\r\n");
-		Headers headers(response);
-		
-		if (!headers.hasValue("Content-Length"))
-			throw std::runtime_error("No \"Content-Length\" field.");
+		response >> httpVersion >> statusCode >> std::skipws;
+		std::getline(response, reasonPhrase);
+		headers.parse(response);
 
-		auto body_size = headers.getInt("Content-Length") - (response.getBuf()->size() - header_size);
-		boost::asio::read(sock(), streambuf.prepare(body_size));
+		if (!headers.hasValue("Content-Length"))
+			throw std::runtime_error("No \"Content-Length\" field in the response.");
+
+		int already_read = streambuf.size();
+		int body_size = headers.getInt("Content-Length") - already_read;
+		auto bytes_transferred = boost::asio::read(sock(), streambuf.prepare(body_size));
+		streambuf.commit(bytes_transferred);
+
+		response.setHeaders(headers);
+		response.setStatusCode(statusCode);
+		response.setReasonPhrase(reasonPhrase);
 
 		return response;
 	}

@@ -90,6 +90,7 @@ void Headers::parse(std::istream &in)
 		std::string key, value;
 		std::istringstream(line.substr(0, it)) >> key;
 		std::getline(std::istringstream(line.substr(it + 1)) >> std::ws, value);
+		value.pop_back();
 
 		values_[key] = value;
 	}

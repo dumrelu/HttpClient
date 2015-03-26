@@ -27,6 +27,8 @@ namespace http {
 		buf_ptr getBuf() const { return buf_; }
 
 		void setHeaders(const Headers &headers) { headers_ = headers; }
+		void setStatusCode(int statusCode) { statusCode_ = statusCode; }
+		void setReasonPhrase(const std::string &reasonPhrase) { reasonPhrase_ = reasonPhrase; }
 		void setBuf(boost::asio::streambuf *buf) { buf_.reset(buf); rdbuf(buf); }
 
 	private:
